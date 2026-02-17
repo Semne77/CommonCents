@@ -30,9 +30,7 @@ describe("Dashboard (integration)", () => {
     expect(await screen.findByText(/Welcome to your dashboard/i)).toBeInTheDocument();
     expect(await screen.findByText(/Semyon/i)).toBeInTheDocument();
 
-    // goals and transactions endpoints are called; we can assert their outputs appear:
-    // Your Dashboard shows "No goals to display" when empty; but our MSW returns one goal,
-    // so we expect the goal type to appear:
+    // MSW returns one goal, so the goal type should be visible on the dashboard.
     expect(await screen.findByText("Groceries")).toBeInTheDocument();
 
     // And transaction merchant appears:

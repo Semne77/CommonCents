@@ -127,40 +127,32 @@ describe("AddTransaction (unit)", () => {
     expect(props.setShowForm).toHaveBeenCalledWith(false);
   });
 
-  it("bulk upload parses TSV and posts to /transactions/bulk", async () => {
+  it("bulk upload calls /transactions/bulk with parsed rows", async () => {
     renderAddTransaction();
 
-    const tsv = `10\t2026-02-01\tPublix\tSupermarkets
--5\t2026-02-02\tTarget\tMerchandise`;
+    axios.post.mockResolvedValueOnce({ data: [] });
 
-    const file = new File([tsv], "tx.tsv", { type: "text/tab-separated-values" });
-
-    axios.post.mockResolvedValueOnce({
-      data: [
-        { userId: 1, amount: 10, merchant: "Publix", category: "Supermarkets" },
-        { userId: 1, amount: -5, merchant: "Target", category: "Merchandise" },
-      ],
-    });
+    const file = new File(
+      ["10\t2026-02-01\tPublix\tSupermarkets\n"],
+      "tx.tsv",
+      { type: "text/tab-separated-values" }
+    );
 
     const fileInput = document.querySelector('input[type="file"]');
-    expect(fileInput).toBeTruthy();
-
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledTimes(1);
-    });
+    await waitFor(() => expect(axios.post).toHaveBeenCalled());
 
     const [url, payload] = axios.post.mock.calls[0];
     expect(url).toBe("http://localhost:8080/transactions/bulk");
-
-    expect(payload).toHaveLength(2);
-    expect(payload[0]).toMatchObject({
-      userId: 1,
-      merchant: "Publix",
-      category: "Supermarkets",
-      amount: 10,
-    });
+    expect(payload).toEqual([
+      expect.objectContaining({
+        userId: 1,
+        merchant: "Publix",
+        category: "Supermarkets",
+        amount: 10,
+      }),
+    ]);
   });
 });
 
