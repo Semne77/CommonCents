@@ -2,7 +2,7 @@
 
 CommonCents is a full-stack personal finance web application for tracking income, expenses, savings, and financial goals across customizable time ranges.
 
-![Dashboard Screenshot](docs/images/Dashboard.png)
+![Dashboard Screenshot](docs/images/dashboard.png)
 ## Tech Stack
 
 - **Frontend:** React (Vite)
